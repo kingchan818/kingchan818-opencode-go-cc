@@ -1,0 +1,41 @@
+{
+  "name": "opencode-claude-proxy",
+  "version": "0.1.0",
+  "private": true,
+  "description": "NestJS Anthropic-compatible proxy for OpenCode Go models.",
+  "packageManager": "pnpm@10.27.0",
+  "scripts": {
+    "build": "nest build",
+    "start": "nest start",
+    "start:dev": "nest start --watch",
+    "test": "jest",
+    "test:e2e": "jest --config ./test/jest-e2e.json"
+  },
+  "dependencies": {
+    "@ai-sdk/anthropic": "^2.0.79",
+    "@ai-sdk/openai-compatible": "^1.0.39",
+    "@nestjs/common": "^11.1.0",
+    "@nestjs/config": "^4.0.0",
+    "@nestjs/core": "^11.1.0",
+    "@nestjs/platform-express": "^11.1.0",
+    "ai": "^5.0.188",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^11.0.0",
+    "@nestjs/testing": "^11.1.0",
+    "@types/express": "^5.0.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^22.10.0",
+    "@types/supertest": "^6.0.2",
+    "jest": "^30.0.0",
+    "source-map-support": "^0.5.21",
+    "supertest": "^7.0.0",
+    "ts-jest": "^29.4.0",
+    "ts-loader": "^9.5.1",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.7.0"
+  }
+}
