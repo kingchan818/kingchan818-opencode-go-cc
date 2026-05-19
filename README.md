@@ -103,30 +103,6 @@ docker build --target test -t opencode-claude-proxy:test .
 
 The runtime image includes a healthcheck against `/v1/models`.
 
-## GitHub CI
-
-The GitHub Actions workflow runs:
-
-- Unit tests
-- E2E tests
-- Nest build
-- Docker test target build
-- Docker production image build
-
-After merge to `main`, CI publishes the image to GitHub Container Registry:
-
-```text
-ghcr.io/kingchan818/opencode-go-to-cc:main
-ghcr.io/kingchan818/opencode-go-to-cc:sha-<commit>
-ghcr.io/kingchan818/opencode-go-to-cc:latest
-```
-
-If GHCR push fails with `permission_denied: write_package`, check the repository settings:
-
-- `Settings -> Actions -> General -> Workflow permissions` should allow read and write permissions.
-- If the package already exists, ensure it grants this repository write access.
-- If `GITHUB_TOKEN` is still blocked, create a GitHub token with `write:packages` and add it as an Actions secret named `GHCR_TOKEN`.
-
 ## Project Structure
 
 ```text
