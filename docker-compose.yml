@@ -1,0 +1,9 @@
+services:
+  app:
+    image: ghcr.io/kingchan818/kingchan818-opencode-go-cc
+    container_name: opencode-go-cc
+    restart: unless-stopped
+    environment:
+      - OPENCODE_API_KEY=${OPENCODE_API_KEY}
+    ports:
+      - "9621:3000"
