@@ -121,6 +121,12 @@ ghcr.io/kingchan818/opencode-go-to-cc:sha-<commit>
 ghcr.io/kingchan818/opencode-go-to-cc:latest
 ```
 
+If GHCR push fails with `permission_denied: write_package`, check the repository settings:
+
+- `Settings -> Actions -> General -> Workflow permissions` should allow read and write permissions.
+- If the package already exists, ensure it grants this repository write access.
+- If `GITHUB_TOKEN` is still blocked, create a GitHub token with `write:packages` and add it as an Actions secret named `GHCR_TOKEN`.
+
 ## Project Structure
 
 ```text
