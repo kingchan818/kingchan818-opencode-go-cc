@@ -1,6 +1,9 @@
 import { MessageService } from "./message.service";
 import { RequestContextService } from "../../../core/logger/request-context.service";
-import { OpenCodeGoAiClientPort } from "../../../integrations/opencode-go/opencode-go.types";
+import {
+  AiStreamEvent,
+  OpenCodeGoAiClientPort,
+} from "../../../integrations/opencode-go/opencode-go.types";
 
 class FakeOpenCodeGoAiClient implements OpenCodeGoAiClientPort {
   async generateText() {
@@ -11,9 +14,9 @@ class FakeOpenCodeGoAiClient implements OpenCodeGoAiClientPort {
     };
   }
 
-  streamText() {
+  streamText(): AsyncIterable<AiStreamEvent> {
     return (async function* () {
-      yield "hello";
+      yield { type: "text_delta" as const, text: "hello" };
     })();
   }
 }

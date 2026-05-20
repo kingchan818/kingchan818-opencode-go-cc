@@ -3,7 +3,10 @@ import { Response } from "express";
 import { MessageController } from "./message.controller";
 import { MessageService } from "./message.service";
 import { RequestContextService } from "../../../core/logger/request-context.service";
-import { OpenCodeGoAiClientPort } from "../../../integrations/opencode-go/opencode-go.types";
+import {
+  AiStreamEvent,
+  OpenCodeGoAiClientPort,
+} from "../../../integrations/opencode-go/opencode-go.types";
 
 class FakeOpenCodeGoAiClient implements OpenCodeGoAiClientPort {
   async generateText() {
@@ -14,10 +17,10 @@ class FakeOpenCodeGoAiClient implements OpenCodeGoAiClientPort {
     };
   }
 
-  streamText() {
+  streamText(): AsyncIterable<AiStreamEvent> {
     return (async function* () {
-      yield "hello ";
-      yield "from stream";
+      yield { type: "text_delta" as const, text: "hello " };
+      yield { type: "text_delta" as const, text: "from stream" };
     })();
   }
 }
@@ -109,6 +112,55 @@ describe("Anthropic-compatible messages API", () => {
     expect(response.body).toContain("event: content_block_delta");
     expect(response.body).toContain("hello ");
     expect(response.body).toContain("event: message_stop");
+  });
+
+  it("streams tool_use blocks for Claude Code tool calls", async () => {
+    class ToolCallingClient extends FakeOpenCodeGoAiClient {
+      override streamText(): AsyncIterable<AiStreamEvent> {
+        return (async function* () {
+          yield {
+            type: "tool_use" as const,
+            id: "toolu_123",
+            name: "Read",
+            input: { file_path: "/tmp/example.ts" },
+          };
+        })();
+      }
+    }
+    const toolService = new MessageService(
+      new ToolCallingClient(),
+      new RequestContextService(),
+    );
+    const toolController = new MessageController(toolService);
+    const response = createResponseRecorder();
+
+    await toolController.createMessage(
+      {
+        model: "opencode-go/kimi-k2.6",
+        max_tokens: 128,
+        stream: true,
+        tools: [
+          {
+            name: "Read",
+            input_schema: {
+              type: "object",
+              properties: { file_path: { type: "string" } },
+              required: ["file_path"],
+            },
+          },
+        ],
+        messages: [{ role: "user", content: "Read the file" }],
+      },
+      undefined,
+      undefined,
+      response,
+    );
+
+    expect(response.body).toContain("event: content_block_start");
+    expect(response.body).toContain('"type":"tool_use"');
+    expect(response.body).toContain('"name":"Read"');
+    expect(response.body).toContain('\\"file_path\\":\\"/tmp/example.ts\\"');
+    expect(response.body).toContain('"stop_reason":"tool_use"');
   });
 
   it("rejects unsupported models", async () => {

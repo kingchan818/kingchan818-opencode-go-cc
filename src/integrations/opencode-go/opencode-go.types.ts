@@ -17,6 +17,18 @@ export interface AiGenerateResult {
   }>;
 }
 
+export type AiStreamEvent =
+  | {
+      readonly type: "text_delta";
+      readonly text: string;
+    }
+  | {
+      readonly type: "tool_use";
+      readonly id: string;
+      readonly name: string;
+      readonly input: unknown;
+    };
+
 export interface OpenCodeGoAiClientPort {
   generateText(
     model: OpenCodeGoModel,
@@ -28,5 +40,5 @@ export interface OpenCodeGoAiClientPort {
     model: OpenCodeGoModel,
     request: AnthropicMessagesRequest,
     authToken?: string,
-  ): AsyncIterable<string>;
+  ): AsyncIterable<AiStreamEvent>;
 }

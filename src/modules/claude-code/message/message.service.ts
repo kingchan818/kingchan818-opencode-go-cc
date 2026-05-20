@@ -12,6 +12,7 @@ import {
 } from "../../../integrations/opencode-go/opencode-go-model.catalog";
 import {
   AiGenerateResult,
+  AiStreamEvent,
   OPENCODE_GO_AI_CLIENT,
   OpenCodeGoAiClientPort,
 } from "../../../integrations/opencode-go/opencode-go.types";
@@ -61,7 +62,7 @@ export class MessageService {
   streamMessage(
     request: AnthropicMessagesRequest,
     authToken?: string,
-  ): AsyncIterable<string> {
+  ): AsyncIterable<AiStreamEvent> {
     const model = this.resolveModelOrThrow(request);
     return this.openCodeGoAiClient.streamText(model, request, authToken);
   }
