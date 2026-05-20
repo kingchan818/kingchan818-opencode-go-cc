@@ -86,6 +86,12 @@ pnpm run build
 
 Unit tests live beside implementation files. E2E tests live in `test/`.
 
+Run the live upstream model e2e suite with an exported API key. This calls every configured model once for a plain message and once for a tool call:
+
+```sh
+OPENCODE_LIVE_E2E=1 OPENCODE_API_KEY=your-opencode-go-api-key pnpm run test:e2e -- --runInBand test/opencode-go-models.live.e2e-spec.ts
+```
+
 ## Docker
 
 Build and run the production image:

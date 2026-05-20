@@ -38,6 +38,7 @@ export class OpenCodeGoAiClient implements OpenCodeGoAiClientPort {
       messages: normalizeMessages(request.messages),
       tools: normalizeTools(request.tools),
       toolChoice: normalizeToolChoice(request.tool_choice),
+      providerOptions: getProviderOptions(model),
       maxOutputTokens: request.max_tokens,
       temperature: request.temperature,
       topP: request.top_p,
@@ -70,6 +71,7 @@ export class OpenCodeGoAiClient implements OpenCodeGoAiClientPort {
       messages: normalizeMessages(request.messages),
       tools: normalizeTools(request.tools),
       toolChoice: normalizeToolChoice(request.tool_choice),
+      providerOptions: getProviderOptions(model),
       maxOutputTokens: request.max_tokens,
       temperature: request.temperature,
       topP: request.top_p,
@@ -111,6 +113,16 @@ export class OpenCodeGoAiClient implements OpenCodeGoAiClientPort {
       apiKey,
     }).chatModel(model.upstreamModelId);
   }
+}
+
+function getProviderOptions(model: OpenCodeGoModel) {
+  if (!model.upstreamModelId.startsWith("deepseek-")) return undefined;
+
+  return {
+    "opencode-go": {
+      thinking: { type: "disabled" },
+    },
+  };
 }
 
 function normalizeSystem(
@@ -168,11 +180,11 @@ function normalizeMessages(
         output: toToolResultOutput(block),
       }));
 
-    if (userTextParts.length > 0) {
-      normalizedMessages.push({ role: "user", content: userTextParts });
-    }
     if (toolResultParts.length > 0) {
       normalizedMessages.push({ role: "tool", content: toolResultParts });
+    }
+    if (userTextParts.length > 0) {
+      normalizedMessages.push({ role: "user", content: userTextParts });
     }
   }
 
